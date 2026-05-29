@@ -5,7 +5,7 @@ def test_user_can_see_current_weather_with_valid_coordinate():
     with sync_playwright() as p:
         # create request context
         request_context = p.request.new_context()
-        response = request_context.get("http://127.0.0.1:8080/api/v1/location/weather?lat=-6.226341056289639&long=106.82254165458681")
+        response = request_context.get("http://127.0.0.1:8080/api/v1/location/weather?lat=-6.226647596739904&long=106.82214655132219")
 
         # default test
         body = template_get(response, 200, None)
@@ -32,7 +32,7 @@ def test_user_cant_see_current_weather_with_invalid_coordinate():
     with sync_playwright() as p:
         # create request context
         request_context = p.request.new_context()
-        response = request_context.get("http://127.0.0.1:8080/api/v1/location/weather?lat=-6.226341056289639")
+        response = request_context.get("http://127.0.0.1:8080/api/v1/location/weather?lat=-6.226647596739904")
 
         # default test
         body = template_get(response, 400, None)
