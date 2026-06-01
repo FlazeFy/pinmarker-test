@@ -1,0 +1,109 @@
+from playwright.sync_api import sync_playwright
+from utils.template import template_validate_column
+from utils.template import template_get
+
+BASE_URL = "http://127.0.0.1:8080/api/v1/global_list/my"
+
+def test_user_can_see_global_list_with_valid_query_param():
+    with sync_playwright() as p:
+        # create request context
+        request_context = p.request.new_context()
+        response = request_context.get(f"{BASE_URL}?page=1&per_page=14&sorting=created_at-asc&with_companion=1&visit_with=manuel")
+
+        # default test
+        body = template_get(response, 200, None)
+        assert body["status"] == "success"
+        assert body["message"] == "Global list fetched"
+
+        # get data
+        data = body["data"]
+        assert "data" in data
+        assert "total_page" in data
+        assert "total_item" in data
+        assert "start_item" in data
+        assert "end_item" in data
+
+        # validate pagination fields
+        pagination_fields = ["total_page", "total_item", "start_item", "end_item"]
+        template_validate_column([data], pagination_fields, "number", False)
+
+        # validate global list fields
+        list_fields_str = ["id", "list_name", "created_at"]
+        list_fields_nullable_str = ["list_desc", "updated_at", "pin_list", "visit_with"]
+        list_fields_number = ["total_pin", "total_visit"]
+
+        template_validate_column(data["data"], list_fields_str, "string", False)
+        template_validate_column(data["data"], list_fields_nullable_str , "string", True)
+        template_validate_column(data["data"], list_fields_number, "number", False)
+
+        request_context.dispose()
+
+def test_user_cant_see_global_list_with_invalid_sorting_target():
+    with sync_playwright() as p:
+        # create request context
+        request_context = p.request.new_context()
+        response = request_context.get(f"{BASE_URL}?sorting=deleted_at-asc")
+
+        # default test
+        body = template_get(response, 400, None)
+        assert body["status"] == "failed"
+        assert body["message"] == "sorting not valid"
+        assert body["data"] == None
+
+        request_context.dispose()
+
+def test_user_cant_see_global_list_with_invalid_sorting_type():
+    with sync_playwright() as p:
+        # create request context
+        request_context = p.request.new_context()
+        response = request_context.get(f"{BASE_URL}?sorting=created_at-lowest")
+
+        # default test
+        body = template_get(response, 400, None)
+        assert body["status"] == "failed"
+        assert body["message"] == "sorting not valid"
+        assert body["data"] == None
+
+        request_context.dispose()
+
+def test_user_cant_see_global_list_with_invalid_companion():
+    with sync_playwright() as p:
+        # create request context
+        request_context = p.request.new_context()
+        response = request_context.get(f"{BASE_URL}?with_companion=2&visit_with=manuel")
+
+        # default test
+        body = template_get(response, 400, None)
+        assert body["status"] == "failed"
+        assert body["message"] == "with_companion not valid"
+        assert body["data"] == None
+
+        request_context.dispose()
+
+def test_user_cant_see_global_list_with_invalid_page():
+    with sync_playwright() as p:
+        # create request context
+        request_context = p.request.new_context()
+        response = request_context.get(f"{BASE_URL}?page=A")
+
+        # default test
+        body = template_get(response, 400, None)
+        assert body["status"] == "failed"
+        assert body["message"] == "page must be a positive number"
+        assert body["data"] == None
+
+        request_context.dispose()
+
+def test_user_cant_see_global_list_with_invalid_per_page():
+    with sync_playwright() as p:
+        # create request context
+        request_context = p.request.new_context()
+        response = request_context.get(f"{BASE_URL}?per_page=A")
+
+        # default test
+        body = template_get(response, 400, None)
+        assert body["status"] == "failed"
+        assert body["message"] == "per_page must be a positive number"
+        assert body["data"] == None
+
+        request_context.dispose()
