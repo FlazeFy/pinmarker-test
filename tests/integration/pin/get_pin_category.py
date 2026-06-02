@@ -19,8 +19,11 @@ def test_user_can_see_pin_category():
         data = body["data"]
 
         # validate fields
-        fields_str = ["pin_category"]
+        fields_str = ["pin_category","dictionary_color"]
         template_validate_column(data, fields_str, "string", False)
+
+        fields_str_nullable = ["dictionary_icon"]
+        template_validate_column(data, fields_str_nullable, "string", True)
 
         fields_int = ["total"]
         template_validate_column(data, fields_int, "number", False)
