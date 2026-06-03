@@ -26,7 +26,7 @@ def test_user_can_see_all_visit_with_with_valid_query_param():
         template_validate_column([data], pagination_fields, "number", False)
 
         # validate data
-        list_fields_str = ["name", "last_visit"]
+        list_fields_str = ["name", "last_visit_at"]
         template_validate_column(data["data"], list_fields_str, "string", False)
         list_fields_number = ["total_visit_with"]
         template_validate_column(data["data"], list_fields_number, "number", False)
