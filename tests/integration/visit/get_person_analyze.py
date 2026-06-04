@@ -26,8 +26,8 @@ def test_user_can_see_person_analyze_with_valid_query_param():
 
         # validate visit_person_summary
         visit_person_summary = data["visit_person_summary"]
-        summary_fields_str = ["last_trip", "first_trip", "most_visited_category", "favorite_hour_context"]
-        summary_fields_number = ["total_trip", "favorite_hour_total", "favorite_hour_context"]
+        summary_fields_str = ["last_trip", "first_trip", "most_visited_category_context", "favorite_day_context", "last_visit_pin_name"]
+        summary_fields_number = ["total_trip", "favorite_hour_total", "favorite_hour_context", "favorite_day_total", "most_visited_category_total", "avg_day_visit","avg_distance"]
         template_validate_column([visit_person_summary], summary_fields_str, "string", True)
         template_validate_column([visit_person_summary], summary_fields_number, "number", True)
 
@@ -56,13 +56,14 @@ def test_user_can_see_person_analyze_with_valid_query_param():
         visit_location_favorite = data["visit_location_favorite"]
         visit_location_category = data["visit_location_category"]
         visit_pertime_year = data["visit_pertime_year"]
+        visit_favorite_tag = data["favorite_tag"]
         visit_location_favorite_fields_str = ["context"]
         visit_location_favorite_fields_number = ["total"]
-        template_validate_column(visit_location_favorite, visit_location_favorite_fields_str, "string", False)
-        template_validate_column(visit_location_favorite, visit_location_favorite_fields_number, "number", False)
-        template_validate_column(visit_location_category, visit_location_favorite_fields_str, "string", False)
-        template_validate_column(visit_location_category, visit_location_favorite_fields_number, "number", False)
-        template_validate_column(visit_pertime_year, visit_location_favorite_fields_number, "number", False)
+
+        context_total_format_data = [visit_location_favorite, visit_favorite_tag, visit_location_category, visit_pertime_year]
+        for dt in context_total_format_data:
+            template_validate_column(dt, visit_location_favorite_fields_str, "string", False)
+            template_validate_column(dt, visit_location_favorite_fields_number, "number", False)
 
         # validate visit_location
         visit_location = data["visit_location"]
@@ -76,6 +77,15 @@ def test_user_can_see_person_analyze_with_valid_query_param():
         visit_pertime_dayname_fields_number = ["total"]
         template_validate_column(visit_pertime_dayname, visit_pertime_dayname_fields_str, "string", False)
         template_validate_column(visit_pertime_dayname, visit_pertime_dayname_fields_number, "number", False)
+
+        # validate reviews
+        visit_review = data["reviews"]
+        visit_review_fields_str = ["review_person", "created_at", "pin_name", "pin_id", "pin_category"]
+        visit_review_fields_str_nullable = ["review_body"]
+        visit_review_fields_number = ["review_rate"]
+        template_validate_column(visit_review["data"], visit_review_fields_str, "string", False)
+        template_validate_column(visit_review["data"], visit_review_fields_str_nullable, "string", True)
+        template_validate_column(visit_review["data"], visit_review_fields_number, "number", False)
 
         request_context.dispose()
 
