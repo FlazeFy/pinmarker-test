@@ -1,21 +1,7 @@
-from behave import given, then
-from selenium import webdriver
+from behave import then
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-
-# Utils
-from tests.e2e.utils.auth_template import login
-
-@given("I have already signed in to the app")
-def step_login(context):
-    testData = {
-        "email": "jalanjalan",
-        "password": "admin"
-    }
-
-    context.driver = webdriver.Chrome()
-    login(context.driver, testData["email"], testData["password"])
 
 @then('I should see the labels "{labels}"')
 def step_main_category_labels(context, labels):
