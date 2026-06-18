@@ -6,7 +6,7 @@ Scenario: User can login with valid data
     And I should see the label "EMAIL OR USERNAME"
     And I should see the label "PASSWORD"
     And I should see the submit button "Sign In"
-    When I fill in the email with "jalanjalan"
+    When I fill in the email with "tester_user"
     And I fill in the password with "admin"
     And I click the submit button
     Then I should be redirected to the dashboard page

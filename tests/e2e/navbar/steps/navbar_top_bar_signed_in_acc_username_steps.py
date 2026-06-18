@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from tests.e2e.utils.auth_template import login
 
 testData = {
-    "email": "jalanjalan",
+    "email": "tester_user",
     "password": "admin"
 }
 

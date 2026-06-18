@@ -8,7 +8,7 @@ from tests.e2e.utils.auth_template import login
 @given("I have already signed in to the app")
 def step_login(context):
     testData = {
-        "email": "jalanjalan",
+        "email": "tester_user",
         "password": "admin"
     }
 
