@@ -1,17 +1,18 @@
 from playwright.sync_api import sync_playwright
-from utils.template import template_validate_column
-from utils.template import template_get
+from utils.auth import do_login_api
+from utils.template import template_validate_column, template_get
 
 BASE_URL = "http://127.0.0.1:8080/api/v1/review"
-
 page = 1
 per_page = 14
 pin_id = "bc04545e-a6d3-a4a8-3a59-439b9e2d8d63"
 
 def test_user_can_see_review_with_valid_pin_id_and_query_param():
     with sync_playwright() as p:
+        token = do_login_api(p)
+        
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}/{pin_id}?page={page}&per_page={per_page}")
 
         # default test
@@ -41,10 +42,12 @@ def test_user_can_see_review_with_valid_pin_id_and_query_param():
 
 def test_user_cant_see_review_with_invalid_pin_id_data_type():
     with sync_playwright() as p:
+        token = do_login_api(p)
+        
         pin_id = "A"
 
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}/{pin_id}")
 
         # default test
@@ -57,10 +60,12 @@ def test_user_cant_see_review_with_invalid_pin_id_data_type():
 
 def test_user_can_see_review_with_invalid_pin_id_not_found():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         pin_id = "11111111-1111-1111-1111-111111111111"
 
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}/{pin_id}")
 
         # default test
@@ -73,8 +78,10 @@ def test_user_can_see_review_with_invalid_pin_id_not_found():
 
 def test_user_cant_see_review_with_invalid_page():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}/{pin_id}?page=A")
 
         # default test
@@ -87,8 +94,10 @@ def test_user_cant_see_review_with_invalid_page():
 
 def test_user_cant_see_review_with_invalid_per_page():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}/{pin_id}?per_page=A")
 
         # default test

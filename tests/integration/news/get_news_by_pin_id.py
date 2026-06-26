@@ -1,6 +1,5 @@
 from playwright.sync_api import sync_playwright
-from utils.template import template_validate_column
-from utils.template import template_get
+from utils.template import template_validate_column, template_get
 
 BASE_URL = "http://127.0.0.1:8080/api/v1/news"
 

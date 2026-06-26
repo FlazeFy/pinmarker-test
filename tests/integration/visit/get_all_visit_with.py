@@ -1,13 +1,15 @@
 from playwright.sync_api import sync_playwright
-from utils.template import template_validate_column
-from utils.template import template_get
+from utils.auth import do_login_api
+from utils.template import template_validate_column, template_get
 
 BASE_URL = "http://127.0.0.1:8080/api/v1/visit/visit_with"
 
 def test_user_can_see_all_visit_with_with_valid_query_param():
     with sync_playwright() as p:
+        token = do_login_api(p)
+        
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}?page=1&per_page=14&search=A")
 
         # default test
@@ -35,8 +37,10 @@ def test_user_can_see_all_visit_with_with_valid_query_param():
 
 def test_user_can_see_all_visit_with_with_invalid_search_not_found():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}?search=notfound")
 
         # default test
@@ -49,8 +53,10 @@ def test_user_can_see_all_visit_with_with_invalid_search_not_found():
 
 def test_user_cant_see_all_visit_with_with_invalid_page():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}?page=A")
 
         # default test
@@ -63,8 +69,10 @@ def test_user_cant_see_all_visit_with_with_invalid_page():
 
 def test_user_cant_see_all_visit_with_with_invalid_per_page():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}?per_page=A")
 
         # default test

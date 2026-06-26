@@ -1,41 +1,41 @@
 from playwright.sync_api import sync_playwright
 from utils.auth import do_login_api
-from utils.template import template_validate_column, template_get
+from utils.template import template_get, template_validate_column
 
-BASE_URL = "http://127.0.0.1:8080/api/v1/location/weather"
+BASE_URL = "http://127.0.0.1:8080/api/v1/location/reverse"
 
-def test_user_can_see_current_weather_with_valid_param():
+def test_user_can_see_nearby_places_with_valid_coordinate():
     with sync_playwright() as p:
         token = do_login_api(p)
         
         # create request context
         request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
-        response = request_context.get(f"{BASE_URL}?lat=-6.219728668926187&long=106.8125110497443")
+        response = request_context.get(f"{BASE_URL}?lat=-6.226647596739904&long=106.82214655132219")
 
         # default test
         body = template_get(response, 200, None)
         assert body["status"] == "success"
-        assert body["message"] == "weather fetched"
+        assert body["message"] == "reverse location fetched"
 
         # get data
         data = body["data"]
+        assert "detail" in data
+        assert "nearby" in data
 
-        assert "weather" in data
-        assert "air" in data
-
-        # validate weather fields
-        weather_fields_str = ["unit"]
-        weather_fields_number = ["temperature", "feels_like", "humidity", "wind_speed", "code"]
-        template_validate_column(data["weather"], weather_fields_str, "string", False)
-        template_validate_column(data["weather"], weather_fields_number, "number", False)
+        # validate detail fields
+        detail_fields = ["address", "city", "country"]
+        template_validate_column([data["detail"]], detail_fields, "string", False)
 
         # validate air fields
-        air_fields_number = ["aqi", "pm2_5", "pm10", "co", "no2"]
-        template_validate_column(data["air"], air_fields_number, "number", False)
+        nearby_fields_str = ["name", "amenity"]
+        nearby_fields_number = ["lat", "lng", "distance"]
+        template_validate_column(data["nearby"], nearby_fields_str, "string", False)
+        template_validate_column(data["nearby"], nearby_fields_number, "number", False)
 
         request_context.dispose()
 
-def test_user_cant_see_current_weather_with_invalid_lat_type():
+
+def test_user_cant_see_nearby_places_with_invalid_lat_type():
     with sync_playwright() as p:
         token = do_login_api(p)
 
@@ -51,7 +51,7 @@ def test_user_cant_see_current_weather_with_invalid_lat_type():
 
         request_context.dispose()
 
-def test_user_cant_see_current_weather_with_empty_coordinate():
+def test_user_cant_see_nearby_places_with_empty_coordinate():
     with sync_playwright() as p:
         token = do_login_api(p)
 
@@ -67,7 +67,7 @@ def test_user_cant_see_current_weather_with_empty_coordinate():
 
         request_context.dispose()
 
-def test_user_cant_see_current_weather_with_invalid_coordinate_number():
+def test_user_cant_see_nearby_places_with_invalid_coordinate_number():
     with sync_playwright() as p:
         token = do_login_api(p)
 

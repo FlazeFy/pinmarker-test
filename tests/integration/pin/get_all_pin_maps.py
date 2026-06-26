@@ -1,13 +1,15 @@
 from playwright.sync_api import sync_playwright
-from utils.template import template_validate_column
-from utils.template import template_get
+from utils.auth import do_login_api
+from utils.template import template_validate_column, template_get
 
 BASE_URL = "http://127.0.0.1:8080/api/v1/pin/maps"
 
 def test_user_can_see_pin_maps_with_valid_query_param():
     with sync_playwright() as p:
+        token = do_login_api(p)
+        
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}?search=bebek&pin_category=Restaurant&page=1&per_page=50&max_distance=5&lat=-6.2302092800454325&long=106.81814749063726&is_favorite=all&is_visited=all")
 
         # default test
@@ -39,8 +41,10 @@ def test_user_can_see_pin_maps_with_valid_query_param():
 
 def test_user_can_see_pin_maps_with_invalid_search_not_found():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}?search=notfound")
 
         # default test
@@ -53,8 +57,10 @@ def test_user_can_see_pin_maps_with_invalid_search_not_found():
 
 def test_user_cant_see_pin_maps_with_invalid_max_distance():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}?max_distance=A")
 
         # default test
@@ -67,8 +73,10 @@ def test_user_cant_see_pin_maps_with_invalid_max_distance():
 
 def test_user_cant_see_pin_maps_with_invalid_is_visited():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}?is_visited=2")
 
         # default test
@@ -81,8 +89,10 @@ def test_user_cant_see_pin_maps_with_invalid_is_visited():
 
 def test_user_cant_see_pin_maps_with_invalid_is_favorite():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}?is_favorite=2")
 
         # default test
@@ -95,8 +105,10 @@ def test_user_cant_see_pin_maps_with_invalid_is_favorite():
 
 def test_user_cant_see_pin_maps_with_invalid_page():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}?page=A")
 
         # default test
@@ -109,8 +121,10 @@ def test_user_cant_see_pin_maps_with_invalid_page():
 
 def test_user_cant_see_pin_maps_with_invalid_per_page():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get(f"{BASE_URL}?per_page=A")
 
         # default test

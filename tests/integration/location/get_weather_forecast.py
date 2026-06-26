@@ -1,7 +1,6 @@
 from playwright.sync_api import sync_playwright
 from utils.auth import do_login_api
-from utils.template import template_validate_column
-from utils.template import template_get
+from utils.template import template_validate_column, template_get
 from datetime import datetime, timedelta
 
 BASE_URL = "http://127.0.0.1:8080/api/v1/location/forecast"
@@ -9,7 +8,7 @@ BASE_URL = "http://127.0.0.1:8080/api/v1/location/forecast"
 tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
 after_16_days = (datetime.now() + timedelta(days=16)).strftime("%Y-%m-%d")
 
-def test_user_can_get_weather_forecast_with_valid_param():
+def test_user_can_see_weather_forecast_with_valid_param():
     with sync_playwright() as p:
         token = do_login_api(p)
         
@@ -45,7 +44,7 @@ def test_user_can_get_weather_forecast_with_valid_param():
 
         request_context.dispose()
 
-def test_user_cant_get_weather_forecast_with_invalid_lat_type():
+def test_user_cant_see_weather_forecast_with_invalid_lat_type():
     with sync_playwright() as p:
         token = do_login_api(p)
 
@@ -61,7 +60,7 @@ def test_user_cant_get_weather_forecast_with_invalid_lat_type():
 
         request_context.dispose()
 
-def test_user_cant_get_weather_forecast_with_invalid_pin_id():
+def test_user_cant_see_weather_forecast_with_invalid_pin_id():
     with sync_playwright() as p:
         token = do_login_api(p)
 
@@ -77,7 +76,7 @@ def test_user_cant_get_weather_forecast_with_invalid_pin_id():
 
         request_context.dispose()
 
-def test_user_cant_get_weather_forecast_with_empty_end_date():
+def test_user_cant_see_weather_forecast_with_empty_end_date():
     with sync_playwright() as p:
         token = do_login_api(p)
 
@@ -93,7 +92,7 @@ def test_user_cant_get_weather_forecast_with_empty_end_date():
 
         request_context.dispose()
 
-def test_user_can_get_weather_forecast_with_invalid_past_date():
+def test_user_can_see_weather_forecast_with_invalid_past_date():
     with sync_playwright() as p:
         token = do_login_api(p)
         
@@ -109,7 +108,7 @@ def test_user_can_get_weather_forecast_with_invalid_past_date():
 
         request_context.dispose()
 
-def test_user_can_get_weather_forecast_with_invalid_date_range():
+def test_user_can_see_weather_forecast_with_invalid_date_range():
     with sync_playwright() as p:
         token = do_login_api(p)
         

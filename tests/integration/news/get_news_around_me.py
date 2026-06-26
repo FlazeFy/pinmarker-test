@@ -1,10 +1,13 @@
 from playwright.sync_api import sync_playwright
+from utils.auth import do_login_api
 from utils.template import template_get, template_validate_column
 
 def test_user_can_see_news_around_me_with_valid_coordinate():
     with sync_playwright() as p:
+        token = do_login_api(p)
+        
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get("http://127.0.0.1:8080/api/v1/news/by/coordinate?lat=-6.226647596739904&long=106.82214655132219")
 
         # default test
@@ -32,8 +35,10 @@ def test_user_can_see_news_around_me_with_valid_coordinate():
 
 def test_user_cant_see_news_around_me_with_invalid_coordinate():
     with sync_playwright() as p:
+        token = do_login_api(p)
+
         # create request context
-        request_context = p.request.new_context()
+        request_context = p.request.new_context(extra_http_headers={ "Authorization": f"Bearer {token}" })
         response = request_context.get("http://127.0.0.1:8080/api/v1/news/by/coordinate?lat=-6.226647596739904")
 
         # default test
