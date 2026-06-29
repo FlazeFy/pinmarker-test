@@ -22,13 +22,21 @@ def test_user_can_see_visit_by_id_with_valid_id_and_query_param():
         # get data
         data = body["data"]
 
-        # validate global list fields
+        # validate main fields
         list_fields_str = ["pin_id", "pin_name", "pin_category", "id", "visit_by", "created_at", "pin_final_address"]
         list_fields_int = ["is_favorite", "pin_lat", "pin_long"]
         list_fields_nullable_str = ["visit_desc", "visit_with", "pin_image", "updated_at"]
         template_validate_column(data, list_fields_str, "string", False)
         template_validate_column(data, list_fields_int, "integer", False)
         template_validate_column(data, list_fields_nullable_str , "string", True)
+
+        # validate visit near period
+        visit_near = ["visit_before", "visit_after"]
+        list_fields_str.remove("visit_by")
+        for dt in visit_near:
+            if data[dt]:
+                template_validate_column(data[dt], list_fields_str, "string", False)
+                template_validate_column(data[dt], ["pin_image"], "string", True)
 
         request_context.dispose()
 

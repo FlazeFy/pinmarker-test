@@ -34,7 +34,7 @@ def test_user_can_see_visit_by_pin_id_with_valid_pin_id_and_query_param():
         template_validate_column([data], pagination_fields, "number", False)
 
         # validate global list fields
-        list_fields_str = ["visit_by", "created_at"]
+        list_fields_str = ["id", "visit_by", "created_at"]
         list_fields_nullable_str = ["visit_desc", "visit_with"]
         template_validate_column(data["data"], list_fields_str, "string", False)
         template_validate_column(data["data"], list_fields_nullable_str , "string", True)
