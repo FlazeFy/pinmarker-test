@@ -3,7 +3,7 @@ from utils.template import template_validate_column
 
 BASE_URL = "http://localhost:4000/graphql"
 
-def test_user_can_search_dictionary_with_valid_dictionary_type():
+def test_user_can_search_user_with_valid_search():
     with sync_playwright() as p:
         # create request context
         request_context = p.request.new_context()
@@ -13,11 +13,16 @@ def test_user_can_search_dictionary_with_valid_dictionary_type():
             data={
                 "query": """
                 query {
-                    searchDictionaries(dictionary_type: "visit_by") {
+                    searchUsers(search: "Leo") {
+                        email
+                        fullname
+                        img_url
                         id
-                        dictionary_color
-                        dictionary_icon
-                        dictionary_name
+                        total_pin
+                        total_review
+                        total_visit
+                        username
+                        created_at
                     }
                 }
                 """
@@ -30,18 +35,20 @@ def test_user_can_search_dictionary_with_valid_dictionary_type():
         assert "errors" not in body
 
         # get data
-        data = body["data"]["searchDictionaries"]
+        data = body["data"]["searchUsers"]
         assert len(data) > 0
 
         # validate data
-        fields_string = ["id", "dictionary_name"]
-        fields_string_nullable = ["dictionary_color", "dictionary_icon"]
+        fields_string = ["id", "username", "email", "fullname", "created_at"]
+        fields_string_nullable = ["img_url"]
+        fields_int = ["total_pin", "total_visit", "total_review"]
         template_validate_column(data, fields_string, "string", False)
+        template_validate_column(data, fields_int, "number", False)
         template_validate_column(data, fields_string_nullable, "string", True)
 
         request_context.dispose()
 
-def test_user_cant_search_dictionary_with_invalid_dictionary_type():
+def test_user_cant_search_user_with_invalid_search():
     with sync_playwright() as p:
         # create request context
         request_context = p.request.new_context()
@@ -51,11 +58,16 @@ def test_user_cant_search_dictionary_with_invalid_dictionary_type():
             data={
                 "query": """
                 query {
-                    searchDictionaries(dictionary_type: "invalid_type") {
+                    searchUsers(search: "invalid_user") {
+                        email
+                        fullname
+                        img_url
                         id
-                        dictionary_color
-                        dictionary_icon
-                        dictionary_name
+                        total_pin
+                        total_review
+                        total_visit
+                        username
+                        created_at
                     }
                 }
                 """
@@ -68,7 +80,7 @@ def test_user_cant_search_dictionary_with_invalid_dictionary_type():
         assert "errors" not in body
 
         # get data
-        data = body["data"]["searchDictionaries"]
+        data = body["data"]["searchUsers"]
         assert data == []
 
         request_context.dispose()
