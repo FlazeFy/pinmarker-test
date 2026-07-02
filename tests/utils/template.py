@@ -43,3 +43,12 @@ def template_validate_column(data, fields: list[str], data_type: str, nullable: 
                 elif data_type == "bool_number":
                     assert isinstance(item[field], int)
                     assert item[field] in [0, 1]
+
+# GraphQL
+def template_validate_graphql_error(body: dict, message: str, code: str):
+    assert "errors" in body
+    assert body["data"] is None
+
+    error = body["errors"][0]
+    assert error["message"] == message
+    assert error["extensions"]["code"] == code
